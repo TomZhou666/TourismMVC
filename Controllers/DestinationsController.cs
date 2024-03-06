@@ -20,9 +20,37 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Destinations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string destinationRegion, string searchString)
         {
-            return View(await _context.Destination.ToListAsync());
+            if(_context.Destination == null)
+            {
+                return Problem("Entity set 'TourismMVCContext.Destination' is null");
+            }
+
+            IQueryable<string> regionQuery = from d in _context.Destination
+                                             orderby d.Region
+                                             select d.Region;
+
+            var destinations = from d in _context.Destination
+                              select d;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                destinations = destinations.Where(d => d.Name!.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(destinationRegion))
+            {
+                destinations = destinations.Where(d => d.Region == destinationRegion);
+            }
+
+            var destinationRegionVM = new DestinationRegionViewModel
+            {
+                Regions = new SelectList(await regionQuery.Distinct().ToListAsync()),
+                Destinations = await destinations.ToListAsync()
+            };
+
+            return View(destinationRegionVM);
         }
 
         // GET: Destinations/Details/5
