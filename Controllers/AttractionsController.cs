@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,37 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Attractions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string attractionType, string searchString)
         {
-            var tourismMVCContext = _context.Attraction.Include(a => a.Destination);
-            return View(await tourismMVCContext.ToListAsync());
+            if(_context.Attraction == null)
+            {
+                return Problem("Entity set 'TourismMVCContext' is null.");
+            }
+
+            IQueryable<string> typeQuery = from a in _context.Attraction
+                                           orderby a.Type
+                                           select a.Type;
+
+            var attractions = from a in _context.Attraction.Include(a => a.Destination)
+                              select a;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                attractions = attractions.Where(a => a.Name!.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(attractionType))
+            {
+                attractions = attractions.Where(a => a.Type == attractionType);
+            }
+
+            var attractionTypeVM = new AttractionTypeViewModel
+            {
+                Types = new SelectList(await typeQuery.Distinct().ToListAsync()),
+                Attractions = await attractions.ToListAsync()
+            };
+
+            return View(attractionTypeVM);
         }
 
         // GET: Attractions/Details/5
@@ -46,6 +74,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Attractions/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["DestinationId"] = new SelectList(_context.Destination, "Id", "Name");
@@ -70,6 +99,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Attractions/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -123,6 +153,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Attractions/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
