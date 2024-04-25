@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace TourismMVC.Models
 {
@@ -10,6 +11,7 @@ namespace TourismMVC.Models
 
         [Required]
         [StringLength(50)]
+        [Display(Name = "Country")]
         public string? Name { get; set; }
 
         [Required]

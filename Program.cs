@@ -17,13 +17,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
-var services = builder.Services;
-var configuration = builder.Configuration;
-
-services.AddAuthentication().AddGoogle(googleOptions =>
+builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+    googleOptions.ClientId = "78740477124-3r4a05n5cdhpprd7q61o5jpelu646j0u.apps.googleusercontent.com";
+    googleOptions.ClientSecret = "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";
 });
 
 var app = builder.Build();

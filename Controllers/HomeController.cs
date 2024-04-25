@@ -4,6 +4,7 @@ using TourismMVC.Models;
 
 namespace TourismMVC.Controllers
 {
+    [RequireHttps]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
