@@ -73,7 +73,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Destinations/Create
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -96,7 +96,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Destinations/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -148,7 +148,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Destinations/Delete/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

@@ -2,13 +2,17 @@
 
 @{
     ViewData["Title"] = "Index";
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <h1>Destination</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (isAdmin)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 
 <form asp-controller="Destinations" asp-action="Index" method="get">
     <p>
@@ -35,7 +39,10 @@
             <th>
                 @Html.DisplayNameFor(model => model.Destinations![0].Description)
             </th>
-            <th></th>
+            @if (isAdmin)
+            {
+                <th></th>
+            }            
         </tr>
     </thead>
     <tbody>
@@ -53,11 +60,14 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+                @if (isAdmin)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }                
         </tr>
 }
     </tbody>

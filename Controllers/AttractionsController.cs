@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +18,8 @@ namespace TourismMVC.Controllers
 
         public AttractionsController(TourismMVCContext context)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo("fr-FR");
             _context = context;
         }
 
@@ -74,7 +77,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Attractions/Create
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["DestinationId"] = new SelectList(_context.Destination, "Id", "Name");
@@ -86,7 +89,7 @@ namespace TourismMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DestinationId,Name,Type,Address,ImageUrl,Description")] Attraction attraction)
+        public async Task<IActionResult> Create([Bind("Id,DestinationId,Name,Type,Address,ImageUrl,Description,Ticket")] Attraction attraction)
         {
             if (ModelState.IsValid)
             {
@@ -99,7 +102,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Attractions/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -121,7 +124,7 @@ namespace TourismMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DestinationId,Name,Type,Address,ImageUrl,Description")] Attraction attraction)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DestinationId,Name,Type,Address,ImageUrl,Description,Ticket")] Attraction attraction)
         {
             if (id != attraction.Id)
             {
@@ -153,7 +156,7 @@ namespace TourismMVC.Controllers
         }
 
         // GET: Attractions/Delete/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

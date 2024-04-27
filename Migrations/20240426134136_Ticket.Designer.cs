@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TourismMVC.Data;
 
@@ -11,9 +12,11 @@ using TourismMVC.Data;
 namespace TourismMVC.Migrations
 {
     [DbContext(typeof(TourismMVCContext))]
-    partial class TourismMVCContextModelSnapshot : ModelSnapshot
+    [Migration("20240426134136_Ticket")]
+    partial class Ticket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

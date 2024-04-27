@@ -29,5 +29,7 @@ namespace TourismMVC.Models
 
         [StringLength(300)]
         public string? Description { get; set; }
+        [DataType(DataType.Currency)]
+        public decimal? Ticket {  get; set; } 
     }
 }
