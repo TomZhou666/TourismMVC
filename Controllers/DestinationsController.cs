@@ -13,9 +13,9 @@ namespace TourismMVC.Controllers
 {
     public class DestinationsController : Controller
     {
-        private readonly TourismMVCContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public DestinationsController(TourismMVCContext context)
+        public DestinationsController(ApplicationDbContext context)
         {
             _context = context;
         }

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourismMVC", "TourismMVC.csproj", "{810B79FE-21CD-4662-8D98-938AA043E7AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TourismMVCTests", "..\TourismMVCTests\TourismMVCTests.csproj", "{B2E69AA4-3BD1-41F1-BEDE-8A20C504923A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TourismMVCTests", "..\TourismMVCTests\TourismMVCTests.csproj", "{B2E69AA4-3BD1-41F1-BEDE-8A20C504923A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

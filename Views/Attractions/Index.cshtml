@@ -47,8 +47,8 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Attractions![0].Ticket)
-            </th>
-            <th></th>
+            </th>    
+            <th></th>           
         </tr>
     </thead>
     <tbody>
@@ -86,10 +86,13 @@
                     </td>
                 }
                 else
-                {
+                {                    
                     <td>
-                        <button>Book</button>
-                    </td>
+                        <form asp-controller="Attractions" asp-action="Book" method="post">
+                            <button type="submit">Book</button>
+                            <input type="hidden" name="id" value="@item.Id" />
+                        </form>
+                    </td>                                      
                 }
         </tr>
 }

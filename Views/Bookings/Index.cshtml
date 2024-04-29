@@ -1,0 +1,105 @@
+﻿@model IEnumerable<TourismMVC.Models.Booking>
+
+@{
+    ViewData["Title"] = "Index";
+    var totalBalance = ViewBag.TotalBalance;
+    var pendingBooking = ViewBag.PendingBooking;
+}
+
+<h1>Booking</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Attraction)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Balance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Attraction.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Balance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+                @if(item.Status != "Paid")
+                {
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+        </tr>
+}
+    </tbody>
+</table>
+@if (pendingBooking)
+{
+    <div id="paypal-button-container" style="width: 200px; margin: auto;"></div>
+}
+
+@section Scripts {
+    <script src="https://www.paypal.com/sdk/js?client-id=AR4t2Pd8ZW_jaoQIuUviyhLYpVBIymM4EQiDuT7gv_GFoWm_4X05kRTeiJQrL3CN0LQl8IwE_AlK_hBX&currency=EUR&locale=en_IE"></script>
+    <script>
+        var totalBalance = @Html.Raw(Json.Serialize(ViewBag.TotalBalance));
+
+        paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                shape: 'rect',
+                label: 'paypal',
+                height: 40
+            },
+            async createOrder(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: totalBalance
+                        }
+                    }]
+                });
+            },
+            async onApprove(data, actions) {
+                return actions.order.capture().then(function (details) {
+                    fetch('/Bookings/ConfirmPayment', {
+                        method: 'post',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(function (response) {
+                        return response.json();
+                    }).then(function (responseJson) {
+                        if (responseJson.success) {
+                            console.log('Payment confirmed and booking status updated.');
+                            window.location.href = '/Bookings';
+                        } else {
+                            console.error('Payment confirmed but booking status update failed.');
+                        }
+                    });
+                });
+            }
+        }).render('#paypal-button-container');        
+    </script>
+}

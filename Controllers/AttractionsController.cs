@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,17 @@ namespace TourismMVC.Controllers
 {
     public class AttractionsController : Controller
     {
-        private readonly TourismMVCContext _context;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public AttractionsController(TourismMVCContext context)
+        public AttractionsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
             System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo("fr-FR");
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // GET: Attractions
@@ -193,6 +198,49 @@ namespace TourismMVC.Controllers
         private bool AttractionExists(int id)
         {
             return _context.Attraction.Any(e => e.Id == id);
+        }
+
+        [HttpPost, ActionName("Book")]
+        [Authorize]
+        public async Task<IActionResult> Book(int id)
+        {
+            var attraction = await _context.Attraction.FirstOrDefaultAsync(a => a.Id == id);
+            if (attraction == null)
+            {
+                return NotFound("Attraction not found.");
+            }
+
+            if (!_signInManager.IsSignedIn(User))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var existingBooking = await _context.Booking
+                                                .FirstOrDefaultAsync(b => b.UserId == userId && b.AttractionId == id);
+            if (existingBooking != null)
+            {
+                _context.Booking.Update(existingBooking);
+            }
+            else
+            {
+                Booking newBooking = new Booking
+                {
+                    UserId = userId,
+                    AttractionId = id,
+                    Balance = (decimal)attraction.Ticket, 
+                    CreatedDate = DateTime.Now,
+                    Status = "Pending"
+                };
+                await _context.Booking.AddRangeAsync(newBooking);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index"); 
         }
     }
 }
